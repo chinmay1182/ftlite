@@ -1,8 +1,8 @@
 Metadata-Version: 2.4
 Name: ftlite
-Version: 0.1.1
+Version: 0.1.2
 Summary: A lightweight, zero-infrastructure feature store for machine learning.
-Author-email: Your Name <your.email@example.com>
+Author-email: Chinmay Balajirao Awade <me@chinmayawade.xyz>
 License: MIT
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License

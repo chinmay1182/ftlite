@@ -78,17 +78,27 @@ ftlite/
 │
 ├── ftlite/
 │   ├── __init__.py
-│   ├── feature.py
-│   ├── offline_store.py
-│   ├── online_store.py
-│   ├── ingestion.py
-│   ├── registry.py
-│   ├── client.py
-│   └── utils.py
+│   ├── feature.py          # Entity, Feature, FeatureView, OnDemandFeatureView
+│   ├── offline_store.py    # DuckDB + temporal ASOF joins
+│   ├── online_store.py     # SQLite online serving store
+│   ├── registry.py         # tracks and persists metadata
+│   ├── ingestion.py        # appends features to Parquet files
+│   ├── client.py           # main FtliteClient orchestrator
+│   └── cli.py              # CLI entry point
 │
 ├── tests/
+│   ├── __init__.py
+│   └── test_client.py
+│
 ├── examples/
+│   └── churn_example/
+│       ├── __init__.py
+│       ├── generate_data.py
+│       └── run_churn_store.py
+│
 ├── docs/
+│   └── index.md
+│
 ├── pyproject.toml
 ├── README.md
 └── LICENSE

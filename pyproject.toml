@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ftlite"
-version = "0.1.1"
+version = "0.1.2"
 description = "A lightweight, zero-infrastructure feature store for machine learning."
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Your Name", email = "your.email@example.com"}
+    {name = "Chinmay Balajirao Awade", email = "me@chinmayawade.xyz"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
