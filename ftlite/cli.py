@@ -114,5 +114,55 @@ def list(registry):
         click.echo(f"  {odfv.name}: features=[{features_str}], inputs={odfv.inputs}")
 
 
+def print_lineage_node(node, indent=""):
+    """Helper to print feature lineage dependency structure in ASCII formatting."""
+    if node["type"] == "on_demand":
+        click.echo(f"{indent}● [On-Demand Feature] {node['name']} ({node['dtype']})")
+        click.echo(f"{indent}  ├── Transform Function: {node['transform_fn']}")
+        click.echo(f"{indent}  └── Inputs:")
+        for inp, subnode in node["inputs"].items():
+            print_lineage_node(subnode, indent + "      ")
+    else:
+        click.echo(f"{indent}● [Standard Feature] {node['name']} ({node['dtype']})")
+        click.echo(f"{indent}  ├── Source Path: {node['source_path']}")
+        click.echo(f"{indent}  └── Entities: {', '.join(node['entities'])}")
+
+
+@main.command()
+@click.argument("feature_name")
+@click.option(
+    "--registry", default=".ftlite/registry.json", help="Path to registry JSON file."
+)
+def lineage(feature_name, registry):
+    """Traces and prints the lineage dependency graph for a feature."""
+    if not os.path.exists(registry):
+        click.echo(f"Registry file not found at {registry}.", err=True)
+        return
+
+    client = FtliteClient(registry_path=registry)
+    try:
+        lineage_dict = client.get_feature_lineage(feature_name)
+        click.echo(f"=== Lineage for {feature_name} ===")
+        print_lineage_node(lineage_dict)
+    except Exception as e:
+        click.echo(f"Failed to trace lineage: {e}", err=True)
+
+
+@main.command()
+@click.option(
+    "--cache-dir",
+    default=".ftlite/cache",
+    help="Path to the cache directory to clear.",
+)
+def cache_clear(cache_dir):
+    """Clears all cached parquet feature joins from local disk."""
+    try:
+        client = FtliteClient()
+        client.clear_cache(cache_dir=cache_dir)
+        click.echo(f"Successfully cleared cache files at: {cache_dir}")
+    except Exception as e:
+        click.echo(f"Failed to clear cache: {e}", err=True)
+
+
 if __name__ == "__main__":
     main()

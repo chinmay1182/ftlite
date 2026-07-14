@@ -36,14 +36,30 @@ class Registry:
         return self._entities[name]
 
     def get_feature_view(self, name: str) -> FeatureView:
-        if name not in self._feature_views:
-            raise KeyError(f"FeatureView '{name}' is not registered.")
-        return self._feature_views[name]
+        if name in self._feature_views:
+            return self._feature_views[name]
+        if "@" not in name:
+            matches = [
+                fv for fv in self._feature_views.values() if fv.base_name == name
+            ]
+            if matches:
+                matches.sort(key=lambda x: x.version or "")
+                return matches[-1]
+        raise KeyError(f"FeatureView '{name}' is not registered.")
 
     def get_on_demand_feature_view(self, name: str) -> OnDemandFeatureView:
-        if name not in self._on_demand_feature_views:
-            raise KeyError(f"OnDemandFeatureView '{name}' is not registered.")
-        return self._on_demand_feature_views[name]
+        if name in self._on_demand_feature_views:
+            return self._on_demand_feature_views[name]
+        if "@" not in name:
+            matches = [
+                odfv
+                for odfv in self._on_demand_feature_views.values()
+                if odfv.base_name == name
+            ]
+            if matches:
+                matches.sort(key=lambda x: x.version or "")
+                return matches[-1]
+        raise KeyError(f"OnDemandFeatureView '{name}' is not registered.")
 
     def list_entities(self) -> List[Entity]:
         return list(self._entities.values())
@@ -70,7 +86,8 @@ class Registry:
             },
             "feature_views": {
                 name: {
-                    "name": fv.name,
+                    "name": fv.base_name,
+                    "version": fv.version,
                     "entities": [ent.name for ent in fv.entities],
                     "features": [
                         {
@@ -88,7 +105,8 @@ class Registry:
             },
             "on_demand_feature_views": {
                 name: {
-                    "name": odfv.name,
+                    "name": odfv.base_name,
+                    "version": odfv.version,
                     "features": [
                         {
                             "name": feat.name,
@@ -137,14 +155,16 @@ class Registry:
                     )
                     for feat in fv_data["features"]
                 ]
-                self._feature_views[name] = FeatureView(
+                fv = FeatureView(
                     name=fv_data["name"],
                     entities=entities,
                     features=features,
                     source_path=fv_data["source_path"],
                     timestamp_field=fv_data["timestamp_field"],
                     created_timestamp_field=fv_data.get("created_timestamp_field"),
+                    version=fv_data.get("version"),
                 )
+                self._feature_views[fv.name] = fv
 
             # Reconstruct on-demand feature views (without transform_fn since it is a function)
             for name, odfv_data in data.get("on_demand_feature_views", {}).items():
@@ -157,12 +177,14 @@ class Registry:
                     for feat in odfv_data["features"]
                 ]
                 # Default to None for transform_fn, to be registered by code at runtime
-                self._on_demand_feature_views[name] = OnDemandFeatureView(
+                odfv = OnDemandFeatureView(
                     name=odfv_data["name"],
                     features=features,
                     inputs=odfv_data["inputs"],
                     transform_fn=None,
+                    version=odfv_data.get("version"),
                 )
+                self._on_demand_feature_views[odfv.name] = odfv
         except Exception as e:
             # If registry file is corrupted, start fresh or warn (here we initialize clean)
             print(

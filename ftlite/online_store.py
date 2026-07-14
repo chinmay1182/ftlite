@@ -5,6 +5,13 @@ from typing import List, Dict, Any
 from ftlite.feature import FeatureView
 
 
+def clean_db_name(name: str) -> str:
+    """Sanitizes names containing '@' or ':' to be safe unquoted SQL identifiers."""
+    return (
+        name.replace("@", "_at_").replace(":", "_").replace("-", "_").replace(".", "_")
+    )
+
+
 class OnlineStore:
     """Manages low-latency online feature retrieval using SQLite."""
 
@@ -42,7 +49,7 @@ class OnlineStore:
             write_df.sort_values(timestamp_col).groupby(join_key).last().reset_index()
         )
 
-        table_name = f"fv_{feature_view.name}"
+        table_name = f"fv_{clean_db_name(feature_view.name)}"
 
         with sqlite3.connect(self.db_path) as conn:
             # We want to do an upsert or replace.
@@ -103,7 +110,7 @@ class OnlineStore:
                 if not requested_fv_feats:
                     continue
 
-                table_name = f"fv_{fv.name}"
+                table_name = f"fv_{clean_db_name(fv.name)}"
 
                 with sqlite3.connect(self.db_path) as conn:
                     cursor = conn.cursor()

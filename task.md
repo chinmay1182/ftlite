@@ -2,8 +2,8 @@
 
 - [x] Feature Transformations (On-Demand Feature Views)
   - [x] Define `OnDemandFeatureView` in `feature.py`
-  - [x] Add serialization & registry support in `registry.py`
-  - [x] Resolve dependencies & apply transformations in `client.py`
+  - [x] Update version lookup and fallback resolution logic in `ftlite/registry.py`
+- [/] Implement native Polars relations and Local Parquet caching in `ftlite/offline_store.py`
 - [x] Command-Line Interface (CLI)
   - [x] Move `click` to main dependencies and define script entry point in `pyproject.toml`
   - [x] Create `cli.py` with init, materialize, list commands

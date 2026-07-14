@@ -1,8 +1,6 @@
 # FTLite
 
-> A lightweight, zero-infrastructure feature store for machine learning.
-
-FTLite is an open-source Python library that makes feature management simple without requiring Kubernetes, Spark, Redis, or cloud infrastructure. It focuses on one thing that matters most for production ML: **point-in-time correct feature retrieval**.
+> FTLite is a batteries-included, local-first feature store for Python that helps you build reproducible machine learning pipelines without Kubernetes, Redis, or cloud infrastructure.
 
 Whether you're training a churn model, fraud detector, recommendation system, or forecasting pipeline, FTLite helps ensure your training features match what would have been available at prediction time—preventing data leakage while keeping the developer experience simple.
 
@@ -245,9 +243,84 @@ client.materialize(
 )
 ```
 
-## 4. Command Line Interface (CLI)
+## 4. Feature Versioning & Fallbacks
 
-FTLite includes a command line utility to inspect your feature registry and execute materialization commands.
+Define versioned feature views to support model experimentation. Queries automatically resolve to the latest version if no version suffix is provided.
+
+```python
+# Define v1 and v2 of a feature view
+fv_v1 = FeatureView(
+    name="customer_fv",
+    version="v1",
+    ...
+)
+fv_v2 = FeatureView(
+    name="customer_fv",
+    version="v2",
+    ...
+)
+
+# Queries resolve to the latest version (v2) by default:
+client.get_historical_features(entity_df, ["customer_fv:balance"])
+
+# Or pin to specific versions using either notation:
+client.get_historical_features(entity_df, ["customer_fv@v1:balance"])
+client.get_historical_features(entity_df, ["customer_fv:balance@v1"])
+```
+
+## 5. Polars Support
+
+Polars DataFrame integration is available as an optional install extra.
+
+```bash
+pip install ftlite[polars]
+```
+
+Pass or retrieve Polars relations natively:
+
+```python
+# Pass Polars DataFrame and get a Polars DataFrame back
+hist_df = client.get_historical_features(
+    entity_df=polars_entity_df,
+    features=["customer_fv:balance"],
+    output_format="polars"
+)
+```
+
+## 6. Point-in-Time Join Caching
+
+Save redundant execution steps by caching point-in-time correct joins locally:
+
+```python
+# Enables warm caching. Expired or excess files are self-evicted.
+client.get_historical_features(
+    entity_df,
+    ["customer_fv:balance"],
+    cache=True,
+    cache_ttl=86400  # 24 hour TTL (default)
+)
+```
+
+Programmatically or via CLI, clear the cache storage:
+
+```python
+client.clear_cache()
+```
+
+## 7. Feature Lineage Tracing
+
+Trace upstream features, intermediate on-demand transform functions, and source parquet files:
+
+```python
+lineage = client.get_feature_lineage("calls_per_minute_transform:calls_per_minute")
+# Returns a structured dictionary describing the transformation path.
+```
+
+Or trace features interactively via the command line.
+
+## 8. Command Line Interface (CLI)
+
+FTLite includes a command line utility to inspect your feature registry, clear cached files, and execute materialization commands.
 
 ```bash
 # Initialize registry and workspace directory
@@ -255,6 +328,12 @@ ftlite init --registry path/to/registry.json --online-db path/to/online_store.db
 
 # List all registered components
 ftlite list --registry path/to/registry.json
+
+# Trace dependency lineage of a feature
+ftlite lineage customer_fv:balance
+
+# Clear local parquet cache files
+ftlite cache-clear
 
 # Materialize features from the CLI
 ftlite materialize \

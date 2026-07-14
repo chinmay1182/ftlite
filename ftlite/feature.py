@@ -43,8 +43,11 @@ class FeatureView:
         source_path: str,
         timestamp_field: str,
         created_timestamp_field: Optional[str] = None,
+        version: Optional[str] = None,
     ):
-        self.name = name
+        self.base_name = name
+        self.version = version
+        self.name = f"{name}@{version}" if version else name
         self.entities = entities
         self.features = features
         self.source_path = source_path
@@ -66,8 +69,11 @@ class OnDemandFeatureView:
         features: List[Feature],
         inputs: List[str],
         transform_fn: Callable,
+        version: Optional[str] = None,
     ):
-        self.name = name
+        self.base_name = name
+        self.version = version
+        self.name = f"{name}@{version}" if version else name
         self.features = features
         self.inputs = inputs
         self.transform_fn = transform_fn
