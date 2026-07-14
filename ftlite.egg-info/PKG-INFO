@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: ftlite
-Version: 0.1.2
+Version: 0.1.3
 Summary: A lightweight, zero-infrastructure feature store for machine learning.
 Author-email: Chinmay Balajirao Awade <me@chinmayawade.xyz>
 License: MIT
