@@ -4,6 +4,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 from ftlite.feature import FeatureView
 
+
 def push_features(feature_view: FeatureView, df: pd.DataFrame) -> None:
     """
     Appends new feature records to the feature view's offline Parquet source path.

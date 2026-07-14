@@ -1,8 +1,16 @@
 from typing import List, Optional, Callable
 
+
 class Entity:
     """Represents a primary key or entity in the feature store."""
-    def __init__(self, name: str, value_type: str, join_key: Optional[str] = None, description: Optional[str] = None):
+
+    def __init__(
+        self,
+        name: str,
+        value_type: str,
+        join_key: Optional[str] = None,
+        description: Optional[str] = None,
+    ):
         self.name = name
         self.value_type = value_type  # e.g., "INT64", "STRING"
         self.join_key = join_key or name
@@ -14,6 +22,7 @@ class Entity:
 
 class Feature:
     """Represents an individual feature definition."""
+
     def __init__(self, name: str, dtype: str, description: Optional[str] = None):
         self.name = name
         self.dtype = dtype  # e.g., "FLOAT", "INT64", "STRING"
@@ -25,6 +34,7 @@ class Feature:
 
 class FeatureView:
     """A logical grouping of related features, tied to one or more entities and a data source."""
+
     def __init__(
         self,
         name: str,
@@ -49,6 +59,7 @@ class FeatureView:
 
 class OnDemandFeatureView:
     """Computes features on the fly using standard features or other inputs."""
+
     def __init__(
         self,
         name: str,

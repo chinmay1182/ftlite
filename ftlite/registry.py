@@ -3,8 +3,10 @@ import json
 from typing import Dict, List
 from ftlite.feature import Entity, Feature, FeatureView, OnDemandFeatureView
 
+
 class Registry:
     """Tracks defined features, entities, feature views, and on-demand feature views, persisting metadata to a JSON file."""
+
     def __init__(self, registry_path: str = ".ftlite/registry.json"):
         self.registry_path = registry_path
         self._entities: Dict[str, Entity] = {}
@@ -55,14 +57,14 @@ class Registry:
     def save(self) -> None:
         """Serializes current registry state to a JSON file."""
         os.makedirs(os.path.dirname(self.registry_path), exist_ok=True)
-        
+
         data = {
             "entities": {
                 name: {
                     "name": ent.name,
                     "value_type": ent.value_type,
                     "join_key": ent.join_key,
-                    "description": ent.description
+                    "description": ent.description,
                 }
                 for name, ent in self._entities.items()
             },
@@ -74,13 +76,13 @@ class Registry:
                         {
                             "name": feat.name,
                             "dtype": feat.dtype,
-                            "description": feat.description
+                            "description": feat.description,
                         }
                         for feat in fv.features
                     ],
                     "source_path": fv.source_path,
                     "timestamp_field": fv.timestamp_field,
-                    "created_timestamp_field": fv.created_timestamp_field
+                    "created_timestamp_field": fv.created_timestamp_field,
                 }
                 for name, fv in self._feature_views.items()
             },
@@ -91,16 +93,16 @@ class Registry:
                         {
                             "name": feat.name,
                             "dtype": feat.dtype,
-                            "description": feat.description
+                            "description": feat.description,
                         }
                         for feat in odfv.features
                     ],
-                    "inputs": odfv.inputs
+                    "inputs": odfv.inputs,
                 }
                 for name, odfv in self._on_demand_feature_views.items()
-            }
+            },
         }
-        
+
         with open(self.registry_path, "w") as f:
             json.dump(data, f, indent=2)
 
@@ -112,24 +114,26 @@ class Registry:
         try:
             with open(self.registry_path, "r") as f:
                 data = json.load(f)
-            
+
             # Reconstruct entities
             for name, ent_data in data.get("entities", {}).items():
                 self._entities[name] = Entity(
                     name=ent_data["name"],
                     value_type=ent_data["value_type"],
                     join_key=ent_data.get("join_key"),
-                    description=ent_data.get("description")
+                    description=ent_data.get("description"),
                 )
-            
+
             # Reconstruct feature views
             for name, fv_data in data.get("feature_views", {}).items():
-                entities = [self.get_entity(ent_name) for ent_name in fv_data["entities"]]
+                entities = [
+                    self.get_entity(ent_name) for ent_name in fv_data["entities"]
+                ]
                 features = [
                     Feature(
                         name=feat["name"],
                         dtype=feat["dtype"],
-                        description=feat.get("description")
+                        description=feat.get("description"),
                     )
                     for feat in fv_data["features"]
                 ]
@@ -139,16 +143,16 @@ class Registry:
                     features=features,
                     source_path=fv_data["source_path"],
                     timestamp_field=fv_data["timestamp_field"],
-                    created_timestamp_field=fv_data.get("created_timestamp_field")
+                    created_timestamp_field=fv_data.get("created_timestamp_field"),
                 )
-                
+
             # Reconstruct on-demand feature views (without transform_fn since it is a function)
             for name, odfv_data in data.get("on_demand_feature_views", {}).items():
                 features = [
                     Feature(
                         name=feat["name"],
                         dtype=feat["dtype"],
-                        description=feat.get("description")
+                        description=feat.get("description"),
                     )
                     for feat in odfv_data["features"]
                 ]
@@ -157,11 +161,13 @@ class Registry:
                     name=odfv_data["name"],
                     features=features,
                     inputs=odfv_data["inputs"],
-                    transform_fn=None
+                    transform_fn=None,
                 )
         except Exception as e:
             # If registry file is corrupted, start fresh or warn (here we initialize clean)
-            print(f"Warning: Failed to load registry: {e}. Starting with an empty registry.")
+            print(
+                f"Warning: Failed to load registry: {e}. Starting with an empty registry."
+            )
             self._entities = {}
             self._feature_views = {}
             self._on_demand_feature_views = {}
