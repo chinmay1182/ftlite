@@ -16,3 +16,5 @@ FTLite is a lightweight, zero-infrastructure feature store for machine learning.
 ## Getting Started
 
 See [examples/churn_example/run_churn_store.py](file:///c:/Users/Admin/Documents/ftlite/examples/churn_example/run_churn_store.py) for a complete end-to-end example using a realistic customer churn dataset.
+
+For an in-depth reference on all API capabilities (On-Demand Transformations, Versioning, Caching, Lineage, and CLI usage), read the [Detailed Guide](file:///c:/Users/Admin/Documents/ftlite/docs/detailed_guide.md).

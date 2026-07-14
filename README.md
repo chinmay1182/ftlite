@@ -1,106 +1,71 @@
 # FTLite
 
-> FTLite is a batteries-included, local-first feature store for Python that helps you build reproducible machine learning pipelines without Kubernetes, Redis, or cloud infrastructure.
+**The simplest local-first feature store for Python.**
 
-Whether you're training a churn model, fraud detector, recommendation system, or forecasting pipeline, FTLite helps ensure your training features match what would have been available at prediction time—preventing data leakage while keeping the developer experience simple.
+*Define features once. Train models without data leakage. Serve features in milliseconds.*
 
----
+**No Kubernetes. No Redis. No Cloud. Just Python.**
 
-## Why FTLite?
-
-Modern feature stores are powerful, but often require significant infrastructure and operational overhead.
-
-FTLite is designed for:
-
-* Individual developers
-* Researchers
-* Students
-* Startups
-* Small ML teams
-* Local-first workflows
-
-No servers.
-
-No Kubernetes.
-
-No metadata databases.
-
-Just Python.
+[![PyPI Version](https://img.shields.io/pypi/v/ftlite.svg)](https://pypi.org/project/ftlite/)
+[![License](https://img.shields.io/pypi/l/ftlite.svg)](https://github.com/chinmay1182/ftlite/blob/main/LICENSE)
 
 ---
 
-## Features
+## Why do I need a Feature Store?
 
-* Lightweight feature definitions
-* Point-in-time correct historical feature retrieval
-* Offline feature store powered by DuckDB + Parquet
-* Online feature store powered by SQLite
-* Zero infrastructure setup
-* Local feature registry
-* Simple Python API
-* Fast local development
-* Type hints and clean API design
+| Without FTLite | With FTLite |
+| :--- | :--- |
+| ❌ Feature engineering logic is duplicated across train & serve | ✅ **Define features once** and reuse them everywhere |
+| ❌ Training and inference compute different feature values | ✅ **Ensure consistency** between offline & online models |
+| ❌ Data leakage silently hurts real-world model performance | ✅ **Prevent data leakage** with temporal point-in-time joins |
+| ❌ Feature versions are difficult to manage and swap | ✅ **Track lineage & version** features out-of-the-box |
+
+---
+
+## FTLite vs. Feast
+
+| Capability | FTLite | Feast |
+| :--- | :---: | :---: |
+| **Local-first / Zero-infrastructure** | ✅ | ⚠️ *Complex* |
+| **Kubernetes Required** | ❌ | *Often* |
+| **Redis Required** | ❌ | *Usually* |
+| **DuckDB (Offline Joins)** | ✅ | ❌ |
+| **SQLite (Online Serving)** | ✅ | ❌ |
+| **Point-in-Time Joins** | ✅ | ✅ |
+| **Feature Versioning** | ✅ | ✅ |
+| **Zero Setup** | ✅ | ❌ |
 
 ---
 
 ## Architecture
 
-```text
-                    +----------------+
-                    |  Raw Features  |
-                    +----------------+
-                            |
-                            v
-                    +----------------+
-                    | Offline Store  |
-                    | DuckDB/Parquet |
-                    +----------------+
-                            |
-          Historical        | Materialize
-         Feature Joins      v
-                    +----------------+
-                    | Online Store   |
-                    |    SQLite      |
-                    +----------------+
-                            |
-                            v
-                      Model Inference
-```
-
----
-
-## Project Structure
-
-```text
-ftlite/
-│
-├── ftlite/
-│   ├── __init__.py
-│   ├── feature.py          # Entity, Feature, FeatureView, OnDemandFeatureView
-│   ├── offline_store.py    # DuckDB + temporal ASOF joins
-│   ├── online_store.py     # SQLite online serving store
-│   ├── registry.py         # tracks and persists metadata
-│   ├── ingestion.py        # appends features to Parquet files
-│   ├── client.py           # main FtliteClient orchestrator
-│   └── cli.py              # CLI entry point
-│
-├── tests/
-│   ├── __init__.py
-│   └── test_client.py
-│
-├── examples/
-│   └── churn_example/
-│       ├── __init__.py
-│       ├── generate_data.py
-│       └── run_churn_store.py
-│
-├── docs/
-│   └── index.md
-│
-├── pyproject.toml
-├── README.md
-└── LICENSE
-```
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 220" width="100%" height="auto">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5" />
+      <stop offset="100%" stop-color="#3B82F6" />
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="#0F172A" rx="12"/>
+  <line x1="230" y1="110" x2="310" y2="110" stroke="#475569" stroke-width="3" stroke-dasharray="6"/>
+  <polygon points="310,105 320,110 310,115" fill="#475569"/>
+  <path d="M 480 110 L 570 110" fill="none" stroke="#475569" stroke-width="3" stroke-dasharray="6"/>
+  <polygon points="570,105 580,110 570,115" fill="#475569"/>
+  <rect x="50" y="60" width="180" height="100" rx="10" fill="url(#blueGrad)"/>
+  <text x="140" y="105" font-family="system-ui, sans-serif" font-weight="bold" font-size="16" fill="#FFFFFF" text-anchor="middle">Offline Data</text>
+  <text x="140" y="130" font-family="system-ui, sans-serif" font-size="12" fill="#E0F2FE" text-anchor="middle">Local Parquet Files</text>
+  <rect x="320" y="40" width="160" height="140" rx="10" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+  <text x="400" y="80" font-family="system-ui, sans-serif" font-weight="bold" font-size="18" fill="#F8FAFC" text-anchor="middle">FTLite Client</text>
+  <text x="400" y="115" font-family="system-ui, sans-serif" font-size="13" fill="#38BDF8" text-anchor="middle">DuckDB (Offline)</text>
+  <text x="400" y="145" font-family="system-ui, sans-serif" font-size="13" fill="#34D399" text-anchor="middle">SQLite (Online)</text>
+  <rect x="580" y="60" width="170" height="100" rx="10" fill="url(#greenGrad)"/>
+  <text x="665" y="105" font-family="system-ui, sans-serif" font-weight="bold" font-size="16" fill="#FFFFFF" text-anchor="middle">ML Application</text>
+  <text x="665" y="130" font-family="system-ui, sans-serif" font-size="12" fill="#ECFDF5" text-anchor="middle">Training &amp; Inference</text>
+</svg>
 
 ---
 
@@ -110,295 +75,117 @@ ftlite/
 pip install ftlite
 ```
 
-Or install from source:
-
+To enable native Polars DataFrame outputs:
 ```bash
-git clone https://github.com/<your-username>/ftlite.git
-
-cd ftlite
-
-pip install -e .
+pip install ftlite[polars]
 ```
 
 ---
 
-## Quick Example
+## 2-Minute Quick Example
 
-### Define and Register Entity & Features
-
+### 1. Define and Register Features
 ```python
 from ftlite import Entity, Feature, FeatureView, FtliteClient
 
-# Initialize client
 client = FtliteClient()
 
-# Define Entity
-customer = Entity(
-    name="customer_id",
-    value_type="INT64"
-)
+# Identify entity
+customer = Entity(name="customer_id", value_type="INT64")
 client.register_entity(customer)
 
-# Define Features and FeatureView
-age = Feature(name="age", dtype="int32")
-balance = Feature(name="balance", dtype="float64")
-
+# Define feature view mapping to local Parquet file
 fv = FeatureView(
-    name="customer_fv",
+    name="customer_stats",
     entities=[customer],
-    features=[age, balance],
-    source_path="data/customer_features.parquet",
+    features=[
+        Feature(name="balance", dtype="double"),
+        Feature(name="active_days", dtype="int64")
+    ],
+    source_path="customer_data.parquet",
     timestamp_field="timestamp"
 )
 client.register_feature_view(fv)
 ```
 
-### Historical Features (Point-in-Time Join)
-
+### 2. Historical Join (Prevent Data Leakage)
 ```python
-# Join historical features to observation entity data
-historical_df = client.get_historical_features(
-    entity_df=entity_df,
-    features=[
-        "customer_fv:age",
-        "customer_fv:balance"
-    ],
-    timestamp_col="timestamp"
-)
-```
-
-### Online Features (Low-Latency Serving)
-
-```python
-# Retrieve online features for real-time predictions
-online_features = client.get_online_features(
-    entity_keys=[1001],
-    features=[
-        "customer_fv:age",
-        "customer_fv:balance"
-    ]
-)
-```
-
----
-
-# Detailed Documentation
-
-## 1. Feature Transformations (On-Demand Feature Views)
-
-On-demand feature views allow you to perform runtime feature transformations using standard Python code, ensuring consistency between training and online serving.
-
-```python
-from ftlite import Feature, OnDemandFeatureView
-
-# 1. Define transformation function
-def calculate_calls_per_minute(df):
-    df["calls_per_minute"] = df["support_calls"] / (df["usage_minutes"] + 1)
-    return df
-
-# 2. Register On-Demand Feature View
-ondemand_fv = OnDemandFeatureView(
-    name="calls_per_minute_transform",
-    inputs=[
-        "customer_activity:usage_minutes",
-        "customer_activity:support_calls"
-    ],
-    features=[
-        Feature(name="calls_per_minute", dtype="float64")
-    ],
-    transform_fn=calculate_calls_per_minute
-)
-client.register_on_demand_feature_view(ondemand_fv)
-```
-
-## 2. Ingesting Features
-
-You can ingest new offline feature values dynamically using the `push` API. It automatically updates local Parquet data storage:
-
-```python
-import pandas as pd
-
-new_data = pd.DataFrame({
-    "customer_id": [1001, 1002],
-    "timestamp": ["2026-07-14T12:00:00", "2026-07-14T12:00:00"],
-    "usage_minutes": [145.2, 89.0],
-    "support_calls": [0, 2],
-    "active_days_in_week": [5, 3]
+# Pass raw entity observations and timestamps
+obs_df = pd.DataFrame({
+    "customer_id": [1001],
+    "timestamp": ["2026-07-14T12:00:00"]
 })
 
-client.push(feature_view_name="customer_activity", df=new_data)
+hist_df = client.get_historical_features(
+    entity_df=obs_df,
+    features=["customer_stats:balance", "customer_stats:active_days"]
+)
 ```
 
-## 3. Materializing to Online Store
+#### Visualizing Point-in-Time Join:
+```text
+Input (Entity Observations):
+| customer_id | timestamp           |
+| ----------- | ------------------- |
+| 1001        | 2026-07-14T12:00:00 |
 
-To use low-latency online feature serving, sync features from the offline store to the SQLite database over a given temporal window:
+Output (PIT Correct Joined Features):
+| customer_id | timestamp           | customer_stats:balance | customer_stats:active_days |
+| ----------- | ------------------- | ---------------------- | -------------------------- |
+| 1001        | 2026-07-14T12:00:00 | 5250.75                | 14                         |
+```
 
+### 3. Materialize & Serve Low-Latency Online Features
 ```python
 import datetime
 
-# Sync last 30 days of data
+# Sync last 30 days offline features to SQLite serving store
 client.materialize(
-    start_time=datetime.datetime(2026, 6, 1),
-    end_time=datetime.datetime(2026, 7, 1)
-)
-```
-
-## 4. Feature Versioning & Fallbacks
-
-Define versioned feature views to support model experimentation. Queries automatically resolve to the latest version if no version suffix is provided.
-
-```python
-# Define v1 and v2 of a feature view
-fv_v1 = FeatureView(
-    name="customer_fv",
-    version="v1",
-    ...
-)
-fv_v2 = FeatureView(
-    name="customer_fv",
-    version="v2",
-    ...
+    start_time=datetime.datetime(2026, 6, 15),
+    end_time=datetime.datetime(2026, 7, 15)
 )
 
-# Queries resolve to the latest version (v2) by default:
-client.get_historical_features(entity_df, ["customer_fv:balance"])
-
-# Or pin to specific versions using either notation:
-client.get_historical_features(entity_df, ["customer_fv@v1:balance"])
-client.get_historical_features(entity_df, ["customer_fv:balance@v1"])
-```
-
-## 5. Polars Support
-
-Polars DataFrame integration is available as an optional install extra.
-
-```bash
-pip install ftlite[polars]
-```
-
-Pass or retrieve Polars relations natively:
-
-```python
-# Pass Polars DataFrame and get a Polars DataFrame back
-hist_df = client.get_historical_features(
-    entity_df=polars_entity_df,
-    features=["customer_fv:balance"],
-    output_format="polars"
+# Fetch low-latency prediction features in <1ms
+online_features = client.get_online_features(
+    entity_keys=[1001],
+    features=["customer_stats:balance"]
 )
-```
-
-## 6. Point-in-Time Join Caching
-
-Save redundant execution steps by caching point-in-time correct joins locally:
-
-```python
-# Enables warm caching. Expired or excess files are self-evicted.
-client.get_historical_features(
-    entity_df,
-    ["customer_fv:balance"],
-    cache=True,
-    cache_ttl=86400  # 24 hour TTL (default)
-)
-```
-
-Programmatically or via CLI, clear the cache storage:
-
-```python
-client.clear_cache()
-```
-
-## 7. Feature Lineage Tracing
-
-Trace upstream features, intermediate on-demand transform functions, and source parquet files:
-
-```python
-lineage = client.get_feature_lineage("calls_per_minute_transform:calls_per_minute")
-# Returns a structured dictionary describing the transformation path.
-```
-
-Or trace features interactively via the command line.
-
-## 8. Command Line Interface (CLI)
-
-FTLite includes a command line utility to inspect your feature registry, clear cached files, and execute materialization commands.
-
-```bash
-# Initialize registry and workspace directory
-ftlite init --registry path/to/registry.json --online-db path/to/online_store.db
-
-# List all registered components
-ftlite list --registry path/to/registry.json
-
-# Trace dependency lineage of a feature
-ftlite lineage customer_fv:balance
-
-# Clear local parquet cache files
-ftlite cache-clear
-
-# Materialize features from the CLI
-ftlite materialize \
-  --registry path/to/registry.json \
-  --online-db path/to/online_store.db \
-  --start 2026-06-01T00:00:00 \
-  --end 2026-07-01T00:00:00
+# Returns: [{'entity_id': 1001, 'customer_stats:balance': 5250.75}]
 ```
 
 ---
 
-# Tech Stack
+## Feature List
 
-| Component     | Technology     |
-| ------------- | -------------- |
-| Language      | Python         |
-| Offline Store | DuckDB         |
-| Storage       | Parquet        |
-| Online Store  | SQLite         |
-| Testing       | Pytest         |
-| Formatting    | Ruff + Black   |
-| CI            | GitHub Actions |
+* ✅ **Point-in-Time Correct Joins**: Built on DuckDB temporal ASOF joins to prevent data leakage.
+* ✅ **Low-Latency Online Serving**: SQLite-backed serving engine fetching features in sub-milliseconds.
+* ✅ **One-Line Feature Versioning**: Track feature versions explicitly with automatic fallbacks.
+* ✅ **Zero-Configuration Caching**: Automatically cache historical query computations.
+* ✅ **Feature Lineage Tracing**: View recursive upstream dependencies easily via CLI or Python API.
+* ✅ **Optional Polars Support**: Perform lightning-fast queries with native Polars outputs.
+* ✅ **Python-First API**: Simple object-oriented structures with 100% type annotations.
 
 ---
 
-# Example Use Cases
+## Complete ML Examples
 
-* Customer churn prediction
-* Fraud detection
-* Recommendation systems
-* Credit risk modeling
-* Demand forecasting
-* Time-series feature engineering
+We provide fully self-contained ML examples inside the `examples/` directory:
 
----
-
-# Contributing
-
-Contributions are welcome!
-
-If you'd like to contribute:
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Open a Pull Request
-
-Please make sure all tests pass before submitting.
+* 📊 **[Customer Churn](file:///c:/Users/Admin/Documents/ftlite/examples/customer_churn.py)**: End-to-end model training and online inference.
+* 🛡️ **[Fraud Detection](file:///c:/Users/Admin/Documents/ftlite/examples/fraud_detection.py)**: Dynamic query-time On-Demand transformations.
+* 🏠 **[House Price Prediction](file:///c:/Users/Admin/Documents/ftlite/examples/house_price_prediction.py)**: Zip-code statistics using temporal joins.
+* 🔍 **[Recommendation System](file:///c:/Users/Admin/Documents/ftlite/examples/recommendation_system.py)**: Version fallback and lookup syntaxes.
+* 📈 **[Time Series Forecasting](file:///c:/Users/Admin/Documents/ftlite/examples/time_series_forecasting.py)**: Target lag feature generations.
+* ⚡ **[Performance Benchmarks](file:///c:/Users/Admin/Documents/ftlite/examples/benchmark.py)**: Cache hit vs. miss speedups, and Pandas vs. Polars extraction timings.
 
 ---
 
-# Vision
+## Detailed Documentation
 
-FTLite aims to become the simplest feature store for Python.
-
-Instead of managing infrastructure, developers should spend their time building better machine learning models.
+For comprehensive guides on On-Demand Transformations, versioning patterns, cache management, lineage tracking, and command-line scripts, refer to the **[Detailed Guide & API Reference](file:///c:/Users/Admin/Documents/ftlite/docs/detailed_guide.md)**.
 
 ---
 
-# License
+## License
 
 MIT License.
-
----
-
-## ⭐ Support the Project
-
-If you find FTLite useful, please consider giving the repository a ⭐ on GitHub. It helps others discover the project and supports future development.
