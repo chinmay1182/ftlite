@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ftlite"
-version = "0.2.1"
+version = "0.2.2"
 description = "A lightweight, zero-infrastructure feature store for machine learning."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -12,10 +12,23 @@ license = {text = "MIT"}
 authors = [
     {name = "Chinmay Balajirao Awade", email = "me@chinmayawade.xyz"}
 ]
+keywords = ["feature-store", "machine-learning", "mlops", "duckdb", "sqlite", "point-in-time"]
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
     "pandas>=1.5.0",
@@ -23,6 +36,12 @@ dependencies = [
     "pyarrow>=10.0.0",
     "click>=8.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/chinmay1182/ftlite"
+Repository = "https://github.com/chinmay1182/ftlite.git"
+"Bug Tracker" = "https://github.com/chinmay1182/ftlite/issues"
+Documentation = "https://github.com/chinmay1182/ftlite#readme"
 
 [project.scripts]
 ftlite = "ftlite.cli:main"
