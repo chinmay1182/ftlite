@@ -1,6 +1,6 @@
 import os
 import json
-from typing import Dict, List, Optional, Any
+from typing import Dict, List
 from ftlite.feature import Entity, Feature, FeatureView, OnDemandFeatureView
 
 class Registry:

@@ -29,7 +29,7 @@ def push_features(feature_view: FeatureView, df: pd.DataFrame) -> None:
             existing_table = pq.read_table(source_path)
             combined_table = pa.concat_tables([existing_table, table])
             pq.write_table(combined_table, source_path)
-        except Exception as e:
+        except Exception:
             # If read fails, just write the new table
             pq.write_table(table, source_path)
     else:

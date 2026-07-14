@@ -1,8 +1,5 @@
-import os
 import datetime
 import pandas as pd
-import numpy as np
-import pytest
 from ftlite import Entity, Feature, FeatureView, OnDemandFeatureView, FtliteClient
 
 def test_ftlite_end_to_end(tmp_path):

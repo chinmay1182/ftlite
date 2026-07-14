@@ -1,7 +1,7 @@
 import os
 import sqlite3
 import pandas as pd
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from ftlite.feature import FeatureView
 
 class OnlineStore:
@@ -16,7 +16,7 @@ class OnlineStore:
         if db_dir:
             os.makedirs(db_dir, exist_ok=True)
             
-        with sqlite3.connect(self.db_path) as conn:
+        with sqlite3.connect(self.db_path):
             pass
 
     def write_features(self, feature_view: FeatureView, df: pd.DataFrame) -> None:

@@ -1,6 +1,6 @@
 import pandas as pd
 import duckdb
-from typing import List, Dict, Any
+from typing import List
 from ftlite.feature import FeatureView
 
 class OfflineStore:
