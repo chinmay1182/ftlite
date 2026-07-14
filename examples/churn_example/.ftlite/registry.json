@@ -1,0 +1,39 @@
+{
+  "entities": {
+    "customer_id": {
+      "name": "customer_id",
+      "value_type": "INT64",
+      "join_key": "customer_id",
+      "description": null
+    }
+  },
+  "feature_views": {
+    "customer_activity": {
+      "name": "customer_activity",
+      "entities": [
+        "customer_id"
+      ],
+      "features": [
+        {
+          "name": "usage_minutes",
+          "dtype": "double",
+          "description": null
+        },
+        {
+          "name": "support_calls",
+          "dtype": "int64",
+          "description": null
+        },
+        {
+          "name": "active_days_in_week",
+          "dtype": "int64",
+          "description": null
+        }
+      ],
+      "source_path": "C:\\Users\\Admin\\Documents\\ftlite\\examples\\churn_example\\customer_activities.parquet",
+      "timestamp_field": "timestamp",
+      "created_timestamp_field": null
+    }
+  },
+  "on_demand_feature_views": {}
+}

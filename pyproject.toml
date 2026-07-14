@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ftlite"
+version = "0.1.0"
+description = "A lightweight, zero-infrastructure feature store for machine learning."
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "pandas>=1.5.0",
+    "duckdb>=0.8.0",
+    "pyarrow>=10.0.0",
+    "click>=8.0.0",
+]
+
+[project.scripts]
+ftlite = "ftlite.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=23.0.0",
+    "ruff>=0.0.250",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ftlite*"]

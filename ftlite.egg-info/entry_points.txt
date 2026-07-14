@@ -1,0 +1,2 @@
+[console_scripts]
+ftlite = ftlite.cli:main
